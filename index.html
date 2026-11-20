@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ElectroQuest Pro • 2ª Evaluación</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{
+  --bg:#070b14;--card:#0f1623;--card2:#151e2e;--elev:#1a2438;
+  --accent:#4f46e5;--accent2:#818cf8;--success:#10b981;--danger:#ef4444;
+  --text:#f1f5f9;--muted:#94a3b8;--border:#1e293b;--border2:#334155;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+.header{background:rgba(15,22,35,.92);backdrop-filter:blur(12px);padding:14px 18px 12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.logo{font-weight:800;font-size:16px;letter-spacing:-.3px}.logo span{color:var(--accent2)}
+.stats{display:flex;gap:16px;font-size:13px;font-weight:600}
+.stat{display:flex;align-items:center;gap:5px;color:var(--muted)}.stat strong{color:var(--text)}
+.progress-bar{height:4px;background:var(--card2);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);border-radius:99px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.main{flex:1;padding:20px 16px 48px;max-width:740px;margin:0 auto;width:100%}
+
+/* Start */
+.start{text-align:center;padding-top:36px}
+.start h1{font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;background:linear-gradient(120deg,#a5b4fc,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.start .sub{color:var(--muted);font-size:14.5px;line-height:1.55;margin-bottom:28px;max-width:420px;margin-left:auto;margin-right:auto}
+.modes{display:grid;gap:12px;margin-bottom:28px;text-align:left}
+.mode{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .2s}
+.mode:hover,.mode.on{border-color:var(--accent);background:var(--elev);box-shadow:0 0 0 1px var(--accent)}
+.mode h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.mode p{font-size:12.5px;color:var(--muted);line-height:1.4}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:14px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;transition:all .2s}
+.btn:hover{background:#6366f1;transform:translateY(-1px)}.btn:active{transform:none}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text)}.btn-ghost:hover{background:var(--card2)}
+
+/* Question */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 18px;margin-bottom:14px}
+.badge{display:inline-block;font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.qtext{font-size:15.5px;font-weight:500;line-height:1.5;margin-bottom:14px;white-space:pre-line}
+.diagram{background:#0a101c;border:1px solid var(--border);border-radius:12px;padding:16px;margin:14px 0;overflow-x:auto;text-align:center}
+.diagram svg{max-width:100%;height:auto}
+.opts{display:grid;gap:9px}
+.opt{background:var(--card2);border:1.5px solid var(--border);border-radius:12px;padding:13px 14px;font-size:14px;text-align:left;cursor:pointer;display:flex;align-items:flex-start;gap:12px;transition:all .18s;line-height:1.4}
+.opt:hover:not(.off){border-color:var(--accent);background:var(--elev)}
+.opt.ok{background:rgba(16,185,129,.12);border-color:var(--success);color:#6ee7b7}
+.opt.bad{background:rgba(239,68,68,.1);border-color:var(--danger);color:#fca5a5}
+.opt.off{cursor:default;opacity:.92}
+.letter{width:26px;height:26px;border-radius:7px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;margin-top:1px}
+.opt.ok .letter{background:var(--success);color:#fff}
+.opt.bad .letter{background:var(--danger);color:#fff}
+.fb{margin-top:14px;padding:14px;border-radius:12px;font-size:13.5px;line-height:1.55;display:none}
+.fb.show{display:block;animation:in .28s ease}
+.fb.ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)}
+.fb.bad{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22)}
+.fb strong{display:block;margin-bottom:6px;font-size:14px}
+.steps{margin-top:8px;padding-left:2px}.steps div{margin-bottom:3px;color:var(--muted)}
+.actions{display:flex;gap:10px;margin-top:16px}.actions .btn{flex:1}
+
+/* Results */
+.results{text-align:center;padding-top:20px}
+.ring{width:128px;height:128px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p)*1%),#1e293b 0);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative}
+.ring::before{content:'';position:absolute;inset:9px;background:var(--card);border-radius:50%}
+.ring-val{position:relative;z-index:1;font-size:28px;font-weight:800}
+.results h2{font-size:21px;margin-bottom:6px}.results p{color:var(--muted);margin-bottom:24px;font-size:14px;line-height:1.5}
+.review{text-align:left;margin-top:20px}
+.review h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--muted)}
+.rev-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:9px;border-left:3px solid var(--danger)}
+.rev-item .rq{font-weight:600;font-size:13px;margin-bottom:4px}.rev-item .re{color:var(--muted);font-size:12.5px;line-height:1.4}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div class="logo">Electro<span>Quest</span> Pro</div>
+    <div class="stats">
+      <div class="stat" id="lives-wrap">❤️ <strong id="lives">3</strong></div>
+      <div class="stat">🔥 <strong id="streak">0</strong></div>
+      <div class="stat">✅ <strong id="score">0</strong></div>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="bar" style="width:0%"></div></div>
+</div>
+
+<main class="main">
+  <div id="start" class="start">
+    <h1>Segunda Evaluación</h1>
+    <p class="sub">Leyes de Kirchhoff • Análisis de mallas • Circuito de dos baterías • Motores eléctricos<br>Nivel de parcial real.</p>
+    <div class="modes">
+      <div class="mode on" data-m="exam" onclick="sel(this)">
+        <h3>Modo Examen</h3>
+        <p>18 ítems • 3 vidas • Sin pistas hasta responder</p>
+      </div>
+      <div class="mode" data-m="study" onclick="sel(this)">
+        <h3>Modo Estudio</h3>
+        <p>Misma dificultad • Explicaciones completas • Sin límite de vidas</p>
+      </div>
+    </div>
+    <button class="btn" onclick="go()">Comenzar evaluación</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="card">
+      <div class="badge" id="badge">Pregunta 1 de 18</div>
+      <div class="qtext" id="qtext"></div>
+      <div id="diag"></div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost hidden" id="skip" onclick="skip()">Saltar</button>
+      <button class="btn hidden" id="next" onclick="next()">Siguiente</button>
+    </div>
+  </div>
+
+  <div id="end" class="hidden results">
+    <div class="ring" id="ring" style="--p:0"><div class="ring-val" id="pct">0%</div></div>
+    <h2 id="title">Resultado</h2>
+    <p id="msg"></p>
+    <button class="btn" onclick="location.reload()">Reintentar</button>
+    <div class="review" id="review"></div>
+  </div>
+</main>
+
+<script>
+const Q = [
+  // ── KIRCHHOFF TEORÍA RIGUROSA ──
+  {
+    q: "Enunciado correcto de la 1ª Ley de Kirchhoff (ley de nudos):",
+    opts: [
+      "La suma algebraica de las tensiones a lo largo de cualquier malla es nula.",
+      "La suma de las corrientes que arriban a un nudo es igual a la suma de las que lo abandonan.",
+      "La potencia entregada por los generadores es igual a la potencia absorbida por los receptores.",
+      "La resistencia equivalente de un paralelo es siempre menor que la menor de las resistencias."
+    ],
+    ok: 1,
+    exp: "Formulación clásica: ΣIentrantes = ΣIsalientes. Equivalentemente ΣI = 0 si se asigna signo según el sentido (entrante positivo o viceversa).",
+    steps: []
+  },
+  {
+    q: "Enunciado más preciso de la 2ª Ley de Kirchhoff (ley de mallas):",
+    opts: [
+      "La suma de corrientes en cualquier nudo es cero.",
+      "A lo largo de cualquier camino cerrado, la suma algebraica de todas las diferencias de potencial es igual a cero.",
+      "La FEM de un generador es siempre mayor que su tensión en bornes.",
+      "Las corrientes se reparten en proporción inversa a las resistencias de cada rama."
+    ],
+    ok: 1,
+    exp: "ΣV = 0 en toda malla. Incluye tanto las FEM como las caídas I·R (con su signo según el sentido de recorrido).",
+    steps: []
+  },
+  {
+    q: "Al recorrer una malla, ¿cómo se determina el signo de la caída de tensión en una resistencia?",
+    opts: [
+      "Siempre se toma positiva.",
+      "Positiva si el recorrido coincide con el sentido de la corriente; negativa en caso contrario.",
+      "Negativa si el recorrido coincide con el sentido de la corriente (se pierde potencial); positiva si se recorre en sentido contrario.",
+      "Depende únicamente de la polaridad del generador más cercano."
+    ],
+    ok: 2,
+    exp: "Convención habitual de potenciales: al avanzar en el sentido de la corriente a través de una resistencia, el potencial disminuye → término negativo en la ecuación de malla.",
+    steps: []
+  },
+  {
+    q: "Si al resolver el sistema de ecuaciones de mallas una corriente resulta con valor negativo, ¿qué se concluye?",
+    opts: [
+      "Existe un error algebraico y debe recomenzarse el planteo.",
+      "El sentido real de esa corriente es opuesto al que se había supuesto al dibujar las flechas.",
+      "Esa rama se encuentra en cortocircuito.",
+      "El generador asociado a esa malla está completamente descargado."
+    ],
+    ok: 1,
+    exp: "El módulo es correcto. Únicamente debe invertirse el sentido de la flecha de corriente que se había adoptado como positivo.",
+    steps: []
+  },
+  {
+    q: "Para la FEM, ¿cuál es la convención de signos al aplicar la 2ª Ley?",
+    opts: [
+      "Siempre se toma positiva.",
+      "Positiva cuando, al recorrer la malla, se atraviesa el generador de − hacia + (se gana potencial).",
+      "Positiva cuando se atraviesa de + hacia −.",
+      "El signo de la FEM es independiente del sentido de recorrido."
+    ],
+    ok: 1,
+    exp: "Si al caminar por la malla se pasa del borne negativo al positivo del generador, se está subiendo de potencial → término positivo.",
+    steps: []
+  },
+
+  // ── EJERCICIO COMPLETO DOS BATERÍAS ──
+  {
+    q: "Circuito de dos baterías en paralelo alimentando una lámpara.\n\nBatería 1: E1 = 12 V, r1 = 0,2 Ω\nBatería 2: E2 = 11 V, r2 = 0,1 Ω\nCarga: RL = 10 Ω\n\nEn el nudo superior A, ¿cuál es la relación correcta entre las corrientes?",
+    diagram: `<svg width="360" height="170" viewBox="0 0 360 170">
+      <rect x="18" y="28" width="32" height="24" fill="none" stroke="#94a3b8" stroke-width="2"/>
+      <text x="34" y="44" text-anchor="middle" fill="#e2e8f0" font-size="11">12V</text>
+      <line x1="50" y1="40" x2="82" y2="40" stroke="#64748b" stroke-width="2"/>
+      <rect x="82" y="30" width="40" height="20" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <text x="102" y="25" text-anchor="middle" fill="#fbbf24" font-size="10">0,2Ω</text>
+      <line x1="122" y1="40" x2="155" y2="40" stroke="#64748b" stroke-width="2"/>
+      <rect x="18" y="95" width="32" height="24" fill="none" stroke="#94a3b8" stroke-width="2"/>
+      <text x="34" y="111" text-anchor="middle" fill="#e2e8f0" font-size="11">11V</text>
+      <line x1="50" y1="107" x2="82" y2="107" stroke="#64748b" stroke-width="2"/>
+      <rect x="82" y="97" width="40" height="20" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <text x="102" y="92" text-anchor="middle" fill="#fbbf24" font-size="10">0,1Ω</text>
+      <line x1="122" y1="107" x2="155" y2="107" stroke="#64748b" stroke-width="2"/>
+      <circle cx="155" cy="73" r="7" fill="#818cf8"/>
+      <text x="155" y="60" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="600">A</text>
+      <line x1="155" y1="40" x2="155" y2="66" stroke="#64748b" stroke-width="2"/>
+      <line x1="155" y1="80" x2="155" y2="107" stroke="#64748b" stroke-width="2"/>
+      <line x1="162" y1="73" x2="215" y2="73" stroke="#64748b" stroke-width="2"/>
+      <circle cx="238" cy="73" r="20" fill="none" stroke="#f87171" stroke-width="2"/>
+      <text x="238" y="77" text-anchor="middle" fill="#f87171" font-size="12">10Ω</text>
+      <line x1="258" y1="73" x2="310" y2="73" stroke="#64748b" stroke-width="2"/>
+      <line x1="310" y1="73" x2="310" y2="145" stroke="#64748b" stroke-width="2"/>
+      <line x1="310" y1="145" x2="34" y2="145" stroke="#64748b" stroke-width="2"/>
+      <line x1="34" y1="145" x2="34" y2="119" stroke="#64748b" stroke-width="2"/>
+      <line x1="34" y1="52" x2="34" y2="95" stroke="#64748b" stroke-width="2"/>
+      <text x="130" y="33" fill="#94a3b8" font-size="11">I₁</text>
+      <text x="130" y="122" fill="#94a3b8" font-size="11">I₂</text>
+      <text x="185" y="65" fill="#94a3b8" font-size="11">I₃</text>
+    </svg>`,
+    opts: [
+      "I₁ + I₂ = I₃",
+      "I₁ = I₂ + I₃",
+      "I₃ + I₂ = I₁",
+      "I₁ − I₂ = I₃"
+    ],
+    ok: 0,
+    exp: "Aplicación directa de la 1ª Ley en el nudo A: las dos corrientes que llegan desde las baterías suman la corriente que sale hacia la lámpara.",
+    steps: ["I₁ + I₂ = I₃"]
+  },
+  {
+    q: "Al resolver el sistema de mallas del circuito anterior se obtuvo:\nI₁ ≈ +3,71 A\nI₂ ≈ −2,60 A\n\nDetermine el valor de I₃ (corriente por la lámpara).",
+    opts: ["1,11 A", "6,31 A", "−1,11 A", "2,60 A"],
+    ok: 0,
+    exp: "I₃ = I₁ + I₂ = 3,71 + (−2,60) = 1,11 A.",
+    steps: ["I₃ = 3,71 − 2,60 = 1,11 A"]
+  },
+  {
+    q: "Interpretación física del resultado I₂ = −2,60 A:",
+    opts: [
+      "Error de cálculo; las corrientes no pueden ser negativas.",
+      "La batería de 11 V está entregando energía a la lámpara.",
+      "La batería de 12 V está forzando corriente hacia el interior de la batería de 11 V (la está cargando).",
+      "Existe un cortocircuito entre los bornes de la batería 2."
+    ],
+    ok: 2,
+    exp: "El signo negativo indica que el sentido real es opuesto al supuesto. La batería de mayor FEM (12 V) impone la tensión del paralelo y obliga a que corriente entre por el borne positivo de la de 11 V, cargándola.",
+    steps: []
+  },
+  {
+    q: "Con I₃ = 1,11 A y RL = 10 Ω, calcule la tensión en bornes de la lámpara.",
+    opts: ["10,0 V", "11,1 V", "12,0 V", "1,11 V"],
+    ok: 1,
+    exp: "UbL = I₃ · RL = 1,11 × 10 = 11,1 V.",
+    steps: ["UbL = 1,11 A × 10 Ω = 11,1 V"]
+  },
+  {
+    q: "Potencia disipada en la lámpara:",
+    opts: ["11,1 W", "12,32 W", "10 W", "1,23 W"],
+    ok: 1,
+    exp: "P = UbL · I₃ = 11,1 × 1,11 = 12,321 W ≈ 12,32 W.",
+    steps: ["P = 11,1 V × 1,11 A = 12,32 W"]
+  },
+
+  // ── MOTORES (nivel de apuntes) ──
+  {
+    q: "Principio físico fundamental del funcionamiento de todo motor eléctrico:",
+    opts: [
+      "Únicamente la ley de inducción de Faraday.",
+      "La fuerza que experimentan conductores recorridos por corriente eléctrica cuando se hallan inmersos en un campo magnético.",
+      "El efecto Joule en los devanados.",
+      "La resonancia eléctrica entre estator y rotor."
+    ],
+    ok: 1,
+    exp: "Fuerza de Lorentz: F = I · L × B. Esa fuerza sobre los conductores del rotor genera el par motor.",
+    steps: []
+  },
+  {
+    q: "Función específica del colector de delgas en un motor de corriente continua:",
+    opts: [
+      "Generar el campo magnético inductor del estator.",
+      "Invertir periódicamente el sentido de la corriente en las espiras del rotor (cada media revolución) para que el par mantenga siempre el mismo sentido.",
+      "Reducir las pérdidas por corrientes de Foucault en el núcleo.",
+      "Servir exclusivamente de apoyo mecánico del eje."
+    ],
+    ok: 1,
+    exp: "Sin la conmutación que realiza el colector, el par se invertiría cada media vuelta y el motor no giraría de forma continua en un solo sentido.",
+    steps: []
+  },
+  {
+    q: "En el motor monofásico de CA dibujado en los apuntes, ¿qué tipo de rotor se utiliza?",
+    opts: [
+      "Rotor bobinado con anillos rozantes.",
+      "Rotor de imanes permanentes.",
+      "Rotor de jaula de ardilla.",
+      "Rotor de reluctancia pura."
+    ],
+    ok: 2,
+    exp: "Los apuntes muestran claramente un rotor de jaula de ardilla, característico de los motores de inducción monofásicos.",
+    steps: []
+  },
+  {
+    q: "¿Por qué un motor monofásico de CA necesita bobina de arranque (o condensador de arranque)?",
+    opts: [
+      "Para aumentar el par en régimen permanente.",
+      "Porque un único devanado produce un campo magnético pulsante (no giratorio); la bobina auxiliar crea el desfase necesario para generar un campo rotatorio incipiente y el par de arranque.",
+      "Para reducir la corriente absorbida en marcha.",
+      "Para mejorar el factor de potencia una vez alcanzado el régimen nominal."
+    ],
+    ok: 1,
+    exp: "Campo pulsante → par medio nulo en reposo. El desfase introducido por la bobina de arranque genera el par inicial. En muchos motores esa bobina se desconecta después del arranque.",
+    steps: []
+  },
+  {
+    q: "En un motor de CC elemental, ¿dónde se ubican los polos magnéticos del imán (o del devanado inductor)?",
+    opts: [
+      "En el rotor.",
+      "En el estator.",
+      "En el colector.",
+      "Indistintamente en estator o rotor."
+    ],
+    ok: 1,
+    exp: "Los polos inductores se sitúan en el estator (parte fija). El rotor lleva las espiras recorridas por corriente que experimentan la fuerza.",
+    steps: []
+  },
+
+  // ── REPASO SELECTIVO 1ª EVALUACIÓN ──
+  {
+    q: "(Repaso) Expresión correcta de la tensión en bornes de un generador real:",
+    opts: [
+      "Ub = FEM + I·ri",
+      "Ub = FEM − I·ri",
+      "Ub = I·Rext",
+      "Ub = FEM × I"
+    ],
+    ok: 1,
+    exp: "La resistencia interna provoca una caída Cdt_i = I·ri. Por tanto Ub = FEM − Cdt_i.",
+    steps: []
+  },
+  {
+    q: "(Repaso) FEM = 72 V, ri = 1 Ω, It = 3 A. Valor de Ub:",
+    opts: ["72 V", "69 V", "75 V", "3 V"],
+    ok: 1,
+    exp: "Cdt_i = 3 × 1 = 3 V → Ub = 72 − 3 = 69 V.",
+    steps: ["Cdt_i = 3 V", "Ub = 69 V"]
+  },
+  {
+    q: "(Repaso) Dos resistencias de 10 Ω y 30 Ω conectadas en paralelo. Resistencia equivalente:",
+    opts: ["40 Ω", "7,5 Ω", "20 Ω", "15 Ω"],
+    ok: 1,
+    exp: "R∥ = (R1·R2)/(R1+R2) = (10×30)/40 = 7,5 Ω.",
+    steps: ["R∥ = 300/40 = 7,5 Ω"]
+  }
+];
+
+let mode='exam', i=0, score=0, lives=3, streak=0, ans=[];
+
+function sel(el){
+  document.querySelectorAll('.mode').forEach(m=>m.classList.remove('on'));
+  el.classList.add('on');
+  mode=el.dataset.m;
+}
+function go(){
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('lives-wrap').style.display=mode==='exam'?'flex':'none';
+  lives=mode==='exam'?3:999;
+  i=score=streak=0; ans=[];
+  upd(); load();
+}
+function upd(){
+  document.getElementById('lives').textContent=lives;
+  document.getElementById('streak').textContent=streak;
+  document.getElementById('score').textContent=score;
+  document.getElementById('bar').style.width=(i/Q.length*100)+'%';
+}
+function load(){
+  const q=Q[i];
+  document.getElementById('badge').textContent=`Pregunta ${i+1} de ${Q.length}`;
+  document.getElementById('qtext').textContent=q.q;
+  const d=document.getElementById('diag');
+  d.innerHTML=q.diagram?`<div class="diagram">${q.diagram}</div>`:'';
+  const o=document.getElementById('opts');
+  o.innerHTML='';
+  q.opts.forEach((t,k)=>{
+    const div=document.createElement('div');
+    div.className='opt';
+    div.innerHTML=`<div class="letter">${String.fromCharCode(65+k)}</div><div>${t}</div>`;
+    div.onclick=()=>choose(k,div);
+    o.appendChild(div);
+  });
+  document.getElementById('fb').className='fb';
+  document.getElementById('next').classList.add('hidden');
+  document.getElementById('skip').classList.toggle('hidden',mode==='exam');
+}
+function choose(k,el){
+  const q=Q[i];
+  document.querySelectorAll('.opt').forEach(o=>o.classList.add('off'));
+  const good=k===q.ok;
+  el.classList.add(good?'ok':'bad');
+  if(!good) document.querySelectorAll('.opt')[q.ok].classList.add('ok');
+  const fb=document.getElementById('fb');
+  let st='';
+  if(q.steps&&q.steps.length) st=`<div class="steps">${q.steps.map(s=>`<div>• ${s}</div>`).join('')}</div>`;
+  fb.className=`fb show ${good?'ok':'bad'}`;
+  fb.innerHTML=`<strong>${good?'✅ Correcto':'❌ Incorrecto'}</strong>${q.exp}${st}`;
+  if(good){score++;streak++}
+  else{streak=0;if(mode==='exam'){lives--;if(lives<=0){setTimeout(()=>finish(true),1400);return}}}
+  ans.push({q:q.q,ok:good,exp:q.exp});
+  upd();
+  document.getElementById('next').classList.remove('hidden');
+}
+function next(){
+  i++;
+  if(i>=Q.length||(mode==='exam'&&lives<=0)) finish();
+  else load();
+}
+function skip(){
+  ans.push({q:Q[i].q,ok:false,exp:Q[i].exp});
+  next();
+}
+function finish(dead=false){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('end').classList.remove('hidden');
+  const tot=Q.length, p=Math.round(score/tot*100);
+  document.getElementById('ring').style.setProperty('--p',p);
+  document.getElementById('pct').textContent=p+'%';
+  let t,m;
+  if(dead){t='Se agotaron las vidas';m=`Llegaste al ítem ${i+1}. Aciertos: ${score}/${tot}`}
+  else if(p>=85){t='Excelente preparación';m='Nivel sólido para la segunda evaluación. Dominás Kirchhoff y los motores.'}
+  else if(p>=65){t='Nivel aceptable';m='Repasá con detalle los signos en las mallas y la interpretación de corrientes negativas.'}
+  else{t='Necesita refuerzo';m='Priorizá: 1ª y 2ª Ley de Kirchhoff, convención de signos y el ejercicio de las dos baterías.'}
+  document.getElementById('title').textContent=t;
+  document.getElementById('msg').textContent=m;
+  const rev=document.getElementById('review');
+  const err=ans.filter(a=>!a.ok);
+  rev.innerHTML=err.length?'<h3>Errores para repasar</h3>':'';
+  err.forEach(a=>{
+    const d=document.createElement('div');
+    d.className='rev-item';
+    d.innerHTML=`<div class="rq">${a.q.split('\n')[0].substring(0,90)}</div><div class="re">${a.exp}</div>`;
+    rev.appendChild(d);
+  });
+  if(!err.length) rev.innerHTML='<p style="color:var(--success);margin-top:12px;text-align:center">Sin errores. Preparación completa.</p>';
+}
+</script>
+</body>
+</html>
